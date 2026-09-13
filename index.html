@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>推しサーチ｜グッズを13ショップまとめて検索</title>
+<meta name="description" content="作品名・キャラ名を1回入れるだけで、アニメイト・あみあみ・駿河屋・メルカリなど主要ショップの検索結果をまとめて開けます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17122b;        /* 痛バの生地 */
+  --ink-2:#221a3d;
+  --line:#3a2f5e;
+  --paper:#fff6fa;
+  --text:#efe6f5;
+  --muted:#a498c4;
+  --pink:#ff5fa2;
+  --pink-deep:#e0327f;
+  --focus:#ffd84d;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 2px, transparent 2px 7px),
+    radial-gradient(120% 70% at 50% -10%, #2b1f4d 0%, var(--ink) 60%);
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;
+  font-size:16px;line-height:1.7;
+  -webkit-text-size-adjust:100%;
+  padding:0 0 96px;
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px}
+
+/* ---------- header ---------- */
+header{padding:26px 0 6px}
+.logo{
+  font-family:"Zen Maru Gothic",sans-serif;font-weight:900;
+  font-size:26px;letter-spacing:.06em;margin:0;color:var(--paper);
+  display:flex;align-items:center;gap:10px;
+}
+.logo .pin{
+  width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 32% 28%, #fff 0 12%, var(--pink) 13% 70%, var(--pink-deep) 71%);
+  box-shadow:0 0 0 3px rgba(255,95,162,.22);
+}
+.lede{color:var(--muted);font-size:14px;margin:8px 0 0;max-width:44em}
+
+/* ---------- search ---------- */
+.search{margin:20px 0 6px;position:relative}
+.search input{
+  width:100%;padding:18px 54px 18px 18px;
+  background:var(--ink-2);color:var(--paper);
+  border:2px solid var(--line);border-radius:var(--r);
+  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:18px;
+  outline:none;
+}
+.search input::placeholder{color:#7e719e;font-weight:500}
+.search input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,95,162,.18)}
+.clear{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;
+  background:#3a2f5e;color:var(--text);font-size:16px;line-height:1;display:none;
+}
+.clear.on{display:block}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}
+.chip{
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+  border-radius:999px;padding:6px 13px;font-size:13px;cursor:pointer;
+  font-family:inherit;
+}
+.chip:hover,.chip:focus-visible{color:var(--paper);border-color:var(--pink);background:rgba(255,95,162,.1)}
+
+.status{font-size:13px;color:var(--muted);min-height:22px;margin:10px 0 0}
+.status b{color:var(--paper);font-weight:700}
+
+/* ---------- shop sections ---------- */
+section{margin:30px 0 0}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  border-bottom:1px dashed var(--line);padding-bottom:8px;margin-bottom:16px}
+.sec-head h2{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;margin:0;color:var(--paper)}
+.sec-head span{font-size:12px;color:var(--muted)}
+.open-all{
+  background:none;border:1px solid var(--line);color:var(--muted);
+  border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;
+}
+.open-all:hover{border-color:var(--pink);color:var(--paper)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:16px 12px}
+
+/* 缶バッジ */
+.badge{
+  appearance:none;border:0;background:none;padding:0;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  font-family:inherit;color:var(--muted);font-size:11px;
+}
+.badge .face{
+  width:84px;height:84px;border-radius:50%;
+  display:grid;place-items:center;text-align:center;padding:8px;
+  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:13.5px;line-height:1.25;
+  color:var(--fg,#22163a);
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.85) 0 10%, rgba(255,255,255,.25) 11% 34%, transparent 35%),
+    var(--c);
+  box-shadow:0 0 0 4px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.38);
+  transition:transform .12s ease, box-shadow .12s ease;
+  word-break:auto-phrase;
+}
+.badge:nth-child(3n) .face{transform:rotate(-3deg)}
+.badge:nth-child(3n+2) .face{transform:rotate(2.5deg)}
+.badge:active .face{transform:scale(.94)}
+.badge:focus-visible .face{outline:3px solid var(--focus);outline-offset:3px}
+.badge .note{font-size:10.5px;color:#7e719e}
+.badge.seen .face{filter:saturate(.35) brightness(.72)}
+.badge.seen .note::before{content:"見た ";color:var(--pink)}
+.badge[disabled]{opacity:.42;cursor:not-allowed}
+
+/* ---------- footer ---------- */
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;
+  font-size:12px;color:#8a7dae;line-height:1.8}
+footer a{color:var(--muted)}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);
+  background:var(--paper);color:#2a1c3f;padding:11px 18px;border-radius:999px;
+  font-size:13px;font-weight:700;box-shadow:0 8px 26px rgba(0,0,0,.4);
+  transition:transform .28s cubic-bezier(.2,.9,.3,1.2);z-index:9;max-width:92vw;text-align:center;
+}
+.toast.on{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:380px){
+  .grid{grid-template-columns:repeat(3,1fr);gap:14px 8px}
+  .badge .face{width:76px;height:76px;font-size:12.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1 class="logo"><span class="pin" aria-hidden="true"></span>推しサーチ</h1>
+  <p class="lede">作品名やキャラ名を入れて、バッジを押すとそのショップの検索結果が開きます。缶バッジもアクスタも、13サイトを回る手間を1回に。</p>
+</header>
+
+<div class="search">
+  <input id="q" type="search" placeholder="例：夜久衛輔 アクスタ" autocomplete="off" enterkeyhint="search" aria-label="探したいグッズのキーワード">
+  <button class="clear" id="clear" aria-label="キーワードを消す">✕</button>
+</div>
+
+<div class="chips" id="chips" aria-label="キーワードに足す"></div>
+<p class="status" id="status"></p>
+
+<div id="sections"></div>
+
+<footer>
+  <p>各ショップの検索結果ページを開くだけのツールです。在庫・価格・発送条件は各ショップでご確認ください。</p>
+  <p>※アフィリエイトリンクを使う場合は、この位置に「当サイトはアフィリエイト広告を利用しています」の表示が必要です（景品表示法のステマ規制）。</p>
+</footer>
+
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =========================================================================
+   ショップ定義。url の {q} にキーワードが入ります。
+   追加・削除はこの配列を編集するだけ。
+   verify:true は検索URLの形式が変わりやすい／未検証のショップです。
+   ========================================================================= */
+const SHOPS = [
+  { group:"アニメ・グッズ専門店", note:"新品・予約", items:[
+    { name:"アニメイト",     url:"https://www.animate-onlineshop.jp/products/list.php?mode=search&smt={q}", c:"#0068b7" },
+    { name:"ゲーマーズ",     url:"https://www.gamers.co.jp/products/list.php?mode=search&smt={q}", c:"#e8380d" },
+    { name:"とらのあな",     url:"https://ec.toranoana.jp/tora_r/ec/app/catalog/list/?searchWord={q}", c:"#f08300", verify:true },
+    { name:"あみあみ",       url:"https://www.amiami.jp/top/search/list?s_keywords={q}", c:"#e60012", verify:true },
+    { name:"ホビーサーチ",   url:"https://www.1999.co.jp/search?sword={q}", c:"#0b58a6", verify:true },
+    { name:"ホビーストック", url:"https://www.hobbystock.jp/groups?keyword={q}", c:"#0099d9" },
+    { name:"DMM通販",        url:"https://www.dmm.com/mono/-/search/=/searchstr={q}/", c:"#1275d3", verify:true },
+  ]},
+  { group:"中古・二次流通", note:"完売品や絶版はここ", items:[
+    { name:"駿河屋",     url:"https://www.suruga-ya.jp/search?category=&search_word={q}", c:"#d8232a" },
+    { name:"らしんばん", url:"https://shop.lashinbang.com/products/list?search_word={q}", c:"#e4007f", verify:true },
+    { name:"まんだらけ", url:"https://order.mandarake.co.jp/order/listPage/list?keyword={q}", c:"#1a1a1a", verify:true },
+    { name:"メルカリ",   url:"https://jp.mercari.com/search?keyword={q}", c:"#ff0211" },
+    { name:"ヤフオク",   url:"https://auctions.yahoo.co.jp/search/search?p={q}", c:"#ff0033" },
+    { name:"ラクマ",     url:"https://fril.jp/s?query={q}", c:"#ff585d", verify:true },
+  ]},
+  { group:"総合モール", note:"ポイント還元で選ぶなら", items:[
+    { name:"Amazon",          url:"https://www.amazon.co.jp/s?k={q}", c:"#ff9900" },
+    { name:"楽天市場",        url:"https://search.rakuten.co.jp/search/mall/{q}/", c:"#bf0000" },
+    { name:"Yahoo!ショッピング", url:"https://shopping.yahoo.co.jp/search?p={q}", c:"#ff0033" },
+  ]},
+];
+
+/* キーワードに足せる定型ワード */
+const CHIPS = ["缶バッジ","アクリルスタンド","ラバーストラップ","アクリルキーホルダー","ぬいぐるみ","ちょこのせ","タペストリー","クリアファイル","トレーディング","特典","予約"];
+
+/* -------------------------------------------------------------------------
+   アフィリエイトを入れるときは、下の buildUrl でリンクを包みます。
+   例）バリューコマース・A8.net のリダイレクトURL、もしもアフィリエイト等。
+   const WRAP = { "アニメイト": u => "https://ck.jp.ap.valuecommerce.com/...&vc_url=" + encodeURIComponent(u) };
+   ------------------------------------------------------------------------- */
+const WRAP = {};
+
+const $ = s => document.querySelector(s);
+const qEl = $("#q"), statusEl = $("#status"), toastEl = $("#toast"), clearBtn = $("#clear");
+const seen = new Set();          // 押したショップ（ページを離れるとリセット）
+let toastTimer;
+
+function buildUrl(shop, kw){
+  const u = shop.url.replace("{q}", encodeURIComponent(kw));
+  return WRAP[shop.name] ? WRAP[shop.name](u) : u;
+}
+function keyword(){ return qEl.value.trim(); }
+
+/* 背景色の明るさから、読みやすい文字色を選ぶ */
+function textOn(hex){
+  const n = parseInt(hex.slice(1), 16);
+  const [r,g,b] = [(n>>16)&255, (n>>8)&255, n&255].map(v => {
+    const s = v/255;
+    return s <= .03928 ? s/12.92 : Math.pow((s+.055)/1.055, 2.4);
+  });
+  const L = .2126*r + .7152*g + .0722*b;
+  return L > .45 ? "#22163a" : "#fffdf8";
+}
+
+function toast(msg){
+  toastEl.textContent = msg; toastEl.classList.add("on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove("on"), 2600);
+}
+
+/* ---- 描画 ---- */
+function render(){
+  const box = $("#sections");
+  SHOPS.forEach((sec, si) => {
+    const el = document.createElement("section");
+    el.innerHTML = `
+      <div class="sec-head">
+        <div><h2>${sec.group}</h2><span>${sec.note}</span></div>
+        <button class="open-all" data-sec="${si}">まとめて開く</button>
+      </div>
+      <div class="grid"></div>`;
+    const grid = el.querySelector(".grid");
+    sec.items.forEach(shop => {
+      const b = document.createElement("button");
+      b.className = "badge"; b.type = "button"; b.dataset.name = shop.name;
+      b.innerHTML = `<span class="face" style="--c:${shop.c};--fg:${textOn(shop.c)}">${shop.name}</span><span class="note">検索する</span>`;
+      b.addEventListener("click", () => openShop(shop, b));
+      grid.appendChild(b);
+    });
+    box.appendChild(el);
+  });
+
+  const chipBox = $("#chips");
+  CHIPS.forEach(w => {
+    const c = document.createElement("button");
+    c.className = "chip"; c.type = "button"; c.textContent = "＋ " + w;
+    c.addEventListener("click", () => {
+      const cur = keyword();
+      qEl.value = cur.includes(w) ? cur : (cur ? cur + " " + w : w);
+      qEl.focus(); update();
+    });
+    chipBox.appendChild(c);
+  });
+
+  document.querySelectorAll(".open-all").forEach(btn => {
+    btn.addEventListener("click", () => openMany(SHOPS[btn.dataset.sec]));
+  });
+}
+
+function openShop(shop, btn){
+  const kw = keyword();
+  if(!kw){ qEl.focus(); toast("先にキーワードを入れてください"); return; }
+  window.open(buildUrl(shop, kw), "_blank", "noopener");
+  seen.add(shop.name);
+  if(btn) btn.classList.add("seen");
+  syncSeen();
+}
+
+function openMany(sec){
+  const kw = keyword();
+  if(!kw){ qEl.focus(); toast("先にキーワードを入れてください"); return; }
+  let opened = 0;
+  sec.items.forEach((shop, i) => {
+    setTimeout(() => {
+      const w = window.open(buildUrl(shop, kw), "_blank", "noopener");
+      if(w) opened++;
+      seen.add(shop.name);
+      syncSeen();
+      if(i === sec.items.length - 1){
+        toast(opened ? `${opened}件のタブを開きました` : "ブラウザがタブをブロックしました。ポップアップを許可してください");
+      }
+    }, i * 260);
+  });
+}
+
+function syncSeen(){
+  document.querySelectorAll(".badge").forEach(b => {
+    b.classList.toggle("seen", seen.has(b.dataset.name));
+  });
+}
+
+function update(){
+  const kw = keyword();
+  clearBtn.classList.toggle("on", !!kw);
+  document.querySelectorAll(".badge").forEach(b => b.disabled = !kw);
+  statusEl.innerHTML = kw
+    ? `<b>${kw.replace(/</g,"&lt;")}</b> を13ショップで探せます。`
+    : "キーワードを入れるとバッジが押せるようになります。";
+  try{
+    const url = kw ? location.pathname + "?q=" + encodeURIComponent(kw) : location.pathname;
+    history.replaceState(null, "", url);   // URLを共有・ブックマークできる
+  }catch(e){}
+}
+
+/* ---- 初期化 ---- */
+render();
+try{
+  const pre = new URLSearchParams(location.search).get("q");
+  if(pre) qEl.value = pre;
+}catch(e){}
+qEl.addEventListener("input", update);
+clearBtn.addEventListener("click", () => { qEl.value = ""; qEl.focus(); update(); });
+update();
+</script>
+</body>
+</html>
